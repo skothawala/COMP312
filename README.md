@@ -10,4 +10,3 @@ I will be looking at:
 1. Is there a relationship between infant mortality rate and the socioeconomic hardship index?
 2. Is there a relationship between infant mortality rate and prenatal care?
 3. Is there a relationship between infant mortality rate and geographic location?
-4. Lastly, I will look at the relationship between infant mortality rate and availability of Women, Infant, Children (WIC) clinics.
