@@ -1,5 +1,6 @@
 import csv
 import sys
+import operator
 from neighborhood import Neighborhood
 from scipy.stats.stats import pearsonr
 
@@ -91,26 +92,84 @@ print "Loaded death rates for " + str(len(infantMortalities)) + " neighborhoods"
 
 makePrenatalCareArrays()
 print "Loaded prenatal averages for  " + str(len(percentOfInfantsGivenPrenatalCare)) + " neighborhoods"
-
+print "\n"
 
 ########################################End Data Loading#####Start Analysis###################################
 
-infantMortalitiesVsPreNatalCare = []
+def printCorrelationStatements(correlationCoefficient, variablesTested):
+    print "The pearson correlation coefficent for " + variablesTested + " is: " + str(correlationCoefficient)
 
-#for i in xrange(0,len(neighborhoods)):
-    #infantMortalitiesVsPreNatalCare.append([infantMortalities[i], percentOfInfantsGivenPrenatalCare[i]])
-    #print str( infantMortalities[i]) + ", " + str(percentOfInfantsGivenPrenatalCare[i])
-#print infantMortalitiesVsPreNatalCare
+    if(correlationCoefficient > 0.1 and correlationCoefficient < 0.5):
+        print "This means that there is a slightly positive correlation between "  + variablesTested
+    elif(correlationCoefficient > -0.1 and correlationCoefficient < 0.1):
+        print "This means that there is almost no correlation between "  + variablesTested
+    elif(correlationCoefficient > 0):
+        print "This means that there is a positive correlation between "  + variablesTested
+    else:
+        print "This means that there is a negative correlation between "  + variablesTested
+    print "\n"
 
+#Is there a relationship between infant mortality rate and the socioeconomic hardship index?
 perCapitaIncome = []
-
 for i in xrange(0,len(neighborhoods)):
-    perCapitaIncome.append(float(neighborhoods[i].percentHousingBelowPovertyLine))
+    perCapitaIncome.append(float(neighborhoods[i].perCapitaIncome))
+correlationCoefficient = pearsonr(perCapitaIncome, infantMortalities)[0]
 
-print (perCapitaIncome)
+printCorrelationStatements(correlationCoefficient, "per capita income and infant mortality rate")
 
-print pearsonr(perCapitaIncome, infantMortalities)
+percentHousingCrowded = []
+for i in xrange(0,len(neighborhoods)):
+    percentHousingCrowded.append(float(neighborhoods[i].percentHousingCrowded))
+correlationCoefficient = pearsonr(percentHousingCrowded, infantMortalities)[0]
 
+printCorrelationStatements(correlationCoefficient, "percent of houses crowded and infant mortality rate")
+
+percentHousingBelowPovertyLine = []
+for i in xrange(0,len(neighborhoods)):
+    percentHousingBelowPovertyLine.append(float(neighborhoods[i].percentHousingBelowPovertyLine))
+correlationCoefficient = pearsonr(percentHousingBelowPovertyLine, infantMortalities)[0]
+
+printCorrelationStatements(correlationCoefficient, "percent of houses below the poverty line and infant mortality rate")
+
+percentUnEmployed = []
+for i in xrange(0,len(neighborhoods)):
+    percentUnEmployed.append(float(neighborhoods[i].percentUnEmployed))
+correlationCoefficient = pearsonr(percentUnEmployed, infantMortalities)[0]
+
+printCorrelationStatements(correlationCoefficient, "unemplyment percent and infant mortality rate")
+
+percentWithoutDiploma = []
+for i in xrange(0,len(neighborhoods)):
+    percentWithoutDiploma.append(float(neighborhoods[i].percentWithoutDiploma))
+correlationCoefficient = pearsonr(percentWithoutDiploma, infantMortalities)[0]
+
+printCorrelationStatements(correlationCoefficient, "percent of citizens without a diploma and infant mortality rate")
+
+hardshipIndex = []
+for i in xrange(0,len(neighborhoods)):
+    hardshipIndex.append(float(neighborhoods[i].hardshipIndex))
+correlationCoefficient = pearsonr(hardshipIndex, infantMortalities)[0]
+
+printCorrelationStatements(correlationCoefficient, "hardship Index and infant mortality rate")
+
+
+#Is there a relationship between infant mortality rate and prenatal care?
+
+correlationCoefficient = pearsonr(percentOfInfantsGivenPrenatalCare, infantMortalities)[0]
+
+printCorrelationStatements(correlationCoefficient, "percent of infants given prenatal care and infant mortality rate")
+
+#Is there a relationship between infant mortality rate and geographic location?
+
+dictionary = {}
+for i in xrange(0,len(neighborhoods)):
+    dictionary[neighborhoods[i].areaName] = infantMortalities[i]
+#http://stackoverflow.com/questions/613183/sort-a-python-dictionary-by-value
+sorted_dict = sorted(dictionary.items(), key=operator.itemgetter(1), reverse=True)
+
+print "Neighborhood\t# of Mortalities"
+for (key, value) in sorted_dict:
+    print key + "\t" + str(value)
 
 
 
