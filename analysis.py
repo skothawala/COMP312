@@ -1,6 +1,7 @@
 import csv
 import sys
 from neighborhood import Neighborhood
+from scipy.stats.stats import pearsonr
 
 #stores neighborhood objects -> each object contains socioeconomic indicators
 neighborhoods = []
@@ -19,6 +20,7 @@ percentOfInfantsGivenPrenatalCareThirdTrimester = []
 #store percent of parents that gave prenatal care sometime
 percentOfInfantsGivenPrenatalCare = []
 
+########################################Data Loading###################################################
 
 def makeNeighborhoodArray():
     f = open('Data/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv')
@@ -30,7 +32,7 @@ def makeNeighborhoodArray():
     		neighborhoods.append(n)
     	else:
     		i += 1
-    neighborhoods.pop()#last row is stats for whole chicago -> not needed
+    del neighborhoods[-1] #last row is stats for whole chicago -> not needed
 
 def getAndStoreInfantMortalities():
     f = open('Data/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
@@ -40,10 +42,11 @@ def getAndStoreInfantMortalities():
         if(i > 0):#row 0 is the header
             #the index is the neigborhood id -1 (since we start at 0). The index refers to the same neighborhood as the neigborhodos[]
             #Therefore, no need to store the neighborhood information along with this.
-            infantMortalities.append(row[5] + row[6])
+            infantMortalities.append(int(row[5]) + int(row[6]))
+            i += 1
         else:
     		i += 1
-    infantMortalities.pop()#last row is stats for whole chicago -> not needed
+    del infantMortalities[-1]#last row is stats for whole chicago -> not needed
 
 def makePrenatalCareArrays():
     f = open('Data/Public_Health_Statistics_-_Prenatal_care_in_Chicago__by_year__1999___2009.csv')
@@ -87,8 +90,30 @@ getAndStoreInfantMortalities()
 print "Loaded death rates for " + str(len(infantMortalities)) + " neighborhoods"
 
 makePrenatalCareArrays()
-
 print "Loaded prenatal averages for  " + str(len(percentOfInfantsGivenPrenatalCare)) + " neighborhoods"
+
+
+########################################End Data Loading#####Start Analysis###################################
+
+infantMortalitiesVsPreNatalCare = []
+
+#for i in xrange(0,len(neighborhoods)):
+    #infantMortalitiesVsPreNatalCare.append([infantMortalities[i], percentOfInfantsGivenPrenatalCare[i]])
+    #print str( infantMortalities[i]) + ", " + str(percentOfInfantsGivenPrenatalCare[i])
+#print infantMortalitiesVsPreNatalCare
+
+perCapitaIncome = []
+
+for i in xrange(0,len(neighborhoods)):
+    perCapitaIncome.append(float(neighborhoods[i].percentHousingBelowPovertyLine))
+
+print (perCapitaIncome)
+
+print pearsonr(perCapitaIncome, infantMortalities)
+
+
+
+
 
 
 
