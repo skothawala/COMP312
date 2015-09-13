@@ -1,6 +1,9 @@
 import csv
 import sys
 import operator
+import os, sys
+lib_path = os.path.abspath(os.path.join('..'))
+sys.path.append(lib_path)
 from neighborhood import Neighborhood
 
 
@@ -28,7 +31,7 @@ percentOfInfantsGivenPrenatalCare = []
 ########################################Data Loading###################################################
 
 def makeNeighborhoodArray():
-    f = open('Data/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv')
+    f = open('../Data/Census_Data_-_Selected_socioeconomic_indicators_in_Chicago__2008___2012.csv')
     csvF = csv.reader(f)
     i = 0
     for row in csvF:
@@ -40,7 +43,7 @@ def makeNeighborhoodArray():
     del neighborhoods[-1] #last row is stats for whole chicago -> not needed
 
 def getAndStoreInfantMortalities():
-    f = open('Data/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
+    f = open('../Data/Public_Health_Statistics-_Infant_mortality_in_Chicago__2005__2009.csv')
     csvF = csv.reader(f)
     i = 0
     for row in csvF:
@@ -54,7 +57,7 @@ def getAndStoreInfantMortalities():
     del infantMortalities[-1]#last row is stats for whole chicago -> not needed
 
 def makePrenatalCareArrays():
-    f = open('Data/Public_Health_Statistics_-_Prenatal_care_in_Chicago__by_year__1999___2009.csv')
+    f = open('../Data/Public_Health_Statistics_-_Prenatal_care_in_Chicago__by_year__1999___2009.csv')
     csvF = csv.reader(f)
     rows = list(csvF)
     del rows[0] #row 0 is the header
@@ -85,6 +88,11 @@ def makePrenatalCareArrays():
                 percentOfInfantsGivenPrenatalCare.append(totalPercentGiven)
                 break
         index += 1
+
+
+getAndStoreInfantMortalities()
+makePrenatalCareArrays()
+makeNeighborhoodArray()
 
 #Is there a relationship between infant mortality rate and the socioeconomic hardship index?
 print "perCapitaIncome\n"
@@ -127,9 +135,6 @@ for i in xrange(0,len(neighborhoods)):
 
 for row in percentWithoutDiploma:
     print str(row[0]) + ", " + str(row[1])
-
-
-
 
 
 
